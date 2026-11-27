@@ -3,6 +3,7 @@
     python -m promoterpro universe            # index every listed company
     python -m promoterpro scrape --limit 300  # pull fundamentals pages
     python -m promoterpro report              # top promoter-led ideas in the terminal
+    python -m promoterpro stats               # crawl coverage + verdict distribution
     python -m promoterpro serve --port 8757   # dashboard
 """
 from __future__ import annotations
@@ -25,6 +26,7 @@ def main(argv=None) -> int:
     sub.add_parser("report")
     sub.add_parser("rebuild")
     sub.add_parser("reparse")
+    sub.add_parser("stats")
 
     sv = sub.add_parser("serve")
     sv.add_argument("--port", type=int, default=8757)
@@ -63,6 +65,23 @@ def main(argv=None) -> int:
     if args.cmd == "rebuild":
         rows = runner.refresh_scores()
         print(f"scored {len(rows)} companies")
+        return 0
+
+    if args.cmd == "stats":
+        c = store.counts()
+        rows = runner.refresh_scores()
+        gate = [r for r in rows
+                if (r["metrics"].get("promoter_pct") or 0) >= 60
+                and (r["metrics"].get("market_cap") or 0) >= 500]
+        dist = {}
+        for r in gate:
+            dist[r["verdict"]] = dist.get(r["verdict"], 0) + 1
+        order = ("STRONG BUY", "BUY", "HOLD", "AVOID")
+        print(f"universe {c['total']} | read {c['ok']} | failed {c['failed']} | pending {c['pending']}")
+        print(f"gate: promoter >= 60% and market cap >= Rs 500 Cr -> {len(gate)} companies")
+        print("verdicts: " + " | ".join(f"{k} {dist[k]}" for k in order if k in dist))
+        buys = [r["name"] for r in gate if r["verdict"] in ("STRONG BUY", "BUY")]
+        print("buys: " + ", ".join(str(b) for b in buys))
         return 0
 
     if args.cmd == "report":

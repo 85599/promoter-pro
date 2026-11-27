@@ -14,7 +14,7 @@ So the tool starts there, then refuses to be impressed by a single good year.
 
 ## What it does
 
-- **Screens the whole exchange.** 7,633 listed symbols indexed, 2,700+ company pages read so far: balance sheet, profit & loss, cash flow, ratios and the quarterly shareholding table.
+- **Screens the whole exchange.** All 7,633 listed symbols indexed; the crawl works through company pages one at a time and is resumable, so the number read keeps climbing. `python -m promoterpro stats` prints where it stands. Each page gives balance sheet, profit & loss, cash flow, ratios and the quarterly shareholding table.
 - **Scores six weighted pillars** — promoter conviction, balance sheet, profitability, growth, cash generation, valuation — out of 100, with a confidence figure that drops when a pillar has no data instead of quietly re-weighting it away.
 - **Vetoes, not just grades.** Hard red flags (pledging, promoter selling, chronic losses, a stale or implausible multiple, a cycle-peak earnings year) force `AVOID` no matter how good the score looks.
 - **Prices the business, then judges the price.** A required-return hurdle built from a 10-year G-Sec plus an equity premium, adjusted for through-cycle returns, growth, leverage and owner stake, gives a justified P/E. For lenders it switches to a clamped Gordon P/B. A verdict can never contradict the valuation column it prints — an expensive good business is capped to `HOLD`.
@@ -43,7 +43,7 @@ Every row opens a drawer with the full arithmetic, not just a verdict:
 | any severe red flag | `AVOID` | overrides the score |
 | valuation pillar < 35 **or** 40%+ above fair value | capped to `HOLD` | overrides `BUY` |
 
-Current distribution across 197 companies with promoter ≥ 60% and market cap ≥ ₹500 Cr: **5 STRONG BUY · 5 BUY · 83 HOLD · 104 AVOID.** Most businesses fail the price test, which is the point.
+Snapshot of 27 Nov 2026, across the 205 companies then passing the gate (promoter ≥ 60%, market cap ≥ ₹500 Cr): **5 STRONG BUY · 5 BUY · 84 HOLD · 111 AVOID.** Most businesses fail the price test, which is the point. Re-run `python -m promoterpro stats` for the current numbers.
 
 ## Quickstart
 
@@ -56,6 +56,7 @@ cd promoter-pro
 python -m promoterpro universe          # index every listed symbol
 python -m promoterpro scrape            # read company pages, resumable
 python -m promoterpro report            # top promoter-led ideas in the terminal
+python -m promoterpro stats             # pages read so far + verdict distribution
 python -m promoterpro serve --port 8757 # dashboard at http://127.0.0.1:8757/
 ```
 
