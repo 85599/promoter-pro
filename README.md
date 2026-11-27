@@ -4,6 +4,8 @@
 
 ![The screen](docs/screen.png)
 
+**▶ [Watch the 21-second demo](https://github.com/85599/promoter-pro/releases/tag/v1)** — the gate, the ranked screen, the fair-value breakdown, search and CSV export.
+
 ---
 
 ## The idea
