@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+promoterpro/data/
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+docs/cp*/
+demo/
+.DS_Store
+Thumbs.db

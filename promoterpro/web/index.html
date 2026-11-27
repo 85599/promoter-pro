@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Promoter Pro - Indian stock screener on screener.in fundamentals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="frame">
+
+  <header class="nav">
+    <div class="brand">Promoter<span class="dot">°</span></div>
+    <nav class="pill-nav">
+      <a href="#screen" class="active">Screen</a>
+      <a href="#method">How it works</a>
+      <a href="#data">Data</a>
+    </nav>
+    <button class="btn-dark" id="topScan">Scan the market <span class="arr">&#8599;</span></button>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <h1>A cleaner book<br><em>for a brighter portfolio.</em></h1>
+      <p class="lede">
+        Reads every listed company on screener.in &mdash; balance sheet, profit &amp; loss,
+        cash flow and shareholding &mdash; then shortlists the ones where the owners still
+        own at least 60% of the business, and tells you whether to buy, hold or avoid.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-dark lg" id="heroScan">Run the scan</button>
+        <a class="btn-ghost lg" href="#method">See the scoring model</a>
+      </div>
+      <div class="trust">
+        <div class="trust-label">Every figure is scraped, never assumed.</div>
+        <div class="chips">
+          <span>Balance sheet</span><span>P&amp;L</span><span>Cash flow</span>
+          <span>Ratios</span><span>Shareholding</span>
+        </div>
+      </div>
+    </div>
+
+    <aside class="float-card fc-a">
+      <div class="fc-ico">&#9678;</div>
+      <h3>Owners first.</h3>
+      <p>Promoter holding is the cheapest honest signal in the market. Below the gate, nothing else counts.</p>
+    </aside>
+    <aside class="float-card fc-b">
+      <div class="fc-ico">&#8645;</div>
+      <h3>Ten years of books.</h3>
+      <p>Debt, margins and cash conversion are scored on trend, not on the latest flattering quarter.</p>
+    </aside>
+    <aside class="orbit">
+      <span>&#10022;</span>
+      <em>skin in the game</em>
+    </aside>
+  </section>
+
+  <section class="console" id="screen">
+    <div class="console-head">
+      <div>
+        <h2>The screen</h2>
+        <p class="sub" id="coverageLine">Indexing the market&hellip;</p>
+      </div>
+      <div class="console-btns">
+        <button class="btn-dark" id="btnScan">Start scrape</button>
+        <button class="btn-ghost" id="btnStop" disabled>Stop</button>
+        <button class="btn-ghost" id="btnCsv" title="Download every row that matches the current filters">Export CSV</button>
+      </div>
+    </div>
+
+    <div class="progress" id="progress">
+      <div class="bar"><i id="barFill"></i></div>
+      <div class="prog-meta" id="progMeta">Idle. Nothing is running.</div>
+    </div>
+
+    <div class="controls">
+      <label class="ctl">
+        <span>Promoter holding &ge;</span>
+        <span class="ctl-val" id="vPromoter">60%</span>
+        <input type="range" id="minPromoter" min="30" max="90" step="1" value="60">
+      </label>
+      <label class="ctl">
+        <span>Quality score &ge;</span>
+        <span class="ctl-val" id="vScore">55</span>
+        <input type="range" id="minScore" min="0" max="90" step="1" value="55">
+      </label>
+      <label class="ctl">
+        <span>Market cap &ge;</span>
+        <span class="ctl-val" id="vMcap">&#8377;500 Cr</span>
+        <input type="range" id="minMcap" min="0" max="20000" step="100" value="500">
+      </label>
+      <label class="ctl">
+        <span>P/E &le;</span>
+        <span class="ctl-val" id="vPe">Any</span>
+        <input type="range" id="maxPe" min="0" max="120" step="5" value="0">
+      </label>
+      <div class="ctl ctl-search">
+        <input type="search" id="q" placeholder="Search any stock: INA, UNIPARTS…" autocomplete="off">
+        <div class="suggest" id="suggest" hidden></div>
+      </div>
+      <div class="verdicts" id="verdicts">
+        <button data-v="" class="active">All</button>
+        <button data-v="STRONG BUY">Strong buy</button>
+        <button data-v="BUY">Buy</button>
+        <button data-v="HOLD">Hold</button>
+        <button data-v="AVOID">Avoid</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="results">
+        <thead>
+          <tr>
+            <th class="sortable" data-key="name">Company</th>
+            <th class="num sortable" data-key="promoter">Promoter %</th>
+            <th class="num sortable" data-key="score">Score</th>
+            <th class="num sortable" data-key="mcap">Mkt cap</th>
+            <th class="num sortable" data-key="pe">P/E</th>
+            <th class="num sortable" data-key="roce">Returns %</th>
+            <th class="num sortable" data-key="value">Vs fair</th>
+            <th>Verdict</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="empty" hidden>
+        <h3>Nothing scraped yet</h3>
+        <p>Press <b>Start scrape</b>. screener.in rate-limits hard, so the first few hundred
+           companies take a while &mdash; the run is resumable and cached, so it never repeats work.</p>
+      </div>
+    </div>
+    <div class="table-foot" id="tableFoot"></div>
+  </section>
+
+  <section class="method" id="method">
+    <h2>How the verdict is built</h2>
+    <p class="sub">Six weighted pillars, then hard gates that can veto a high score outright.</p>
+    <div class="pillars" id="pillars"></div>
+    <div class="gates">
+      <h3>Automatic vetoes</h3>
+      <ul id="gates"></ul>
+    </div>
+  </section>
+
+  <section class="method data" id="data">
+    <h3 class="tight">Where the numbers come from</h3>
+    <p class="sub">
+      Source: public company pages on screener.in, reached through their robots-allowed sitemap.
+      The scraper self-throttles, backs off on HTTP 429, caches every page in SQLite and is
+      resumable, so a full-market pass is a background job rather than a re-run.
+      Fair value is a modelled yardstick from trailing EPS and a required return, not a target price.
+      Nothing here is investment advice.
+    </p>
+  </section>
+</div>
+
+<div class="drawer-scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden>
+  <button class="drawer-close" id="drawerClose">&times;</button>
+  <div id="drawerBody"></div>
+</aside>
+
+<script src="/app.js"></script>
+</body>
+</html>
