@@ -61,14 +61,6 @@ python -m promoterpro serve --port 8757 # dashboard at http://127.0.0.1:8757/
 
 The crawl is resumable: state lives in a local SQLite file, so you can stop it, reboot, and pick up where it left off.
 
-## Data, and its limits
-
-- Fundamentals are read from **publicly available company pages on [screener.in](https://www.screener.in)**. Nothing is bought, licensed or redistributed; the repo ships the parser and the model, and the pages are fetched from your own machine.
-- `robots.txt` is respected: only `/company/*` paths and the sitemaps are fetched, and the paginated/sorted listing URLs the site disallows are never requested.
-- The client is deliberately slow — two workers, adaptive spacing that doubles on every HTTP 429 and relaxes only gradually. A full pass takes days, not hours, which is the cost of not being a burden.
-- Screener's own numbers are the input, so its gaps are inherited. Promoter **pledging** is not on the default company page and is therefore usually absent rather than zero.
-- Prices and market caps are a snapshot, not live. Re-scrape before acting.
-
 **This is a research tool, not investment advice.** It has not been backtested against realised returns and no accuracy figure is claimed anywhere in it.
 
 ## Licence
